@@ -39,26 +39,27 @@ export default function App() {
     setPhase('idle')
   }, [previewUrl])
 
-  const handleUpload = useCallback(async () => {
+  const handleUpload = useCallback(() => {
     const site = siteName.trim() || '현장'
     const baseName = buildFilename(site)
     const memoText = memo.trim() ? buildMemoText(site, memo) : null
 
-    try {
+    // getParams는 login() 이후 호출 — await 없이 upload()에 전달해 팝업 차단 방지
+    const getParams = async () => {
       const compressed = await compressImage(capturedBlob)
-      const result = await upload({
-        imageBlob: compressed,
-        memoText,
-        baseName,
-        siteName: site,
-      })
-      if (siteName.trim()) addSite(siteName.trim())
-      setUploadResult(result ?? { name: baseName + '.jpg' })
-      setPhase('done')
-    } catch (e) {
-      setUploadError(e?.message ?? '업로드 실패')
-      setPhase('done')
+      return { imageBlob: compressed, memoText, baseName, siteName: site }
     }
+
+    upload(getParams)
+      .then((result) => {
+        if (siteName.trim()) addSite(siteName.trim())
+        setUploadResult(result ?? { name: baseName + '.jpg' })
+        setPhase('done')
+      })
+      .catch((e) => {
+        setUploadError(e?.message ?? '업로드 실패')
+        setPhase('done')
+      })
   }, [siteName, memo, capturedBlob, upload, addSite])
 
   const handleStatusClose = useCallback(() => {

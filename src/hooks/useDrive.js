@@ -29,9 +29,10 @@ export function useDrive() {
     onSuccess: async (res) => {
       setToken(res.access_token)
       if (pendingRef.current) {
-        const { params, resolve, reject } = pendingRef.current
+        const { getParams, resolve, reject } = pendingRef.current
         pendingRef.current = null
         try {
+          const params = await getParams()
           resolve(await runUpload(res.access_token, params))
         } catch (e) {
           reject(e)
@@ -49,16 +50,19 @@ export function useDrive() {
     },
   })
 
+  // getParams: async 팩토리 함수 — login() 이후에 호출되므로 팝업 차단 우회
   const upload = useCallback(
-    async (params) => {
+    (getParams) => {
+      setUploading(true)
       if (!token) {
-        setUploading(true)
         return new Promise((resolve, reject) => {
-          pendingRef.current = { params, resolve, reject }
-          login()
+          pendingRef.current = { getParams, resolve, reject }
+          login() // 사용자 제스처 컨텍스트 안에서 동기 호출
         })
       }
-      return runUpload(token, params)
+      return getParams()
+        .then((params) => runUpload(token, params))
+        .catch((e) => { setUploading(false); throw e })
     },
     [token, login, runUpload]
   )
