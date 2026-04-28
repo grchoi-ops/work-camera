@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 
 const STORAGE_KEY = 'work-camera:sites'
+const LAST_SITE_KEY = 'work-camera:last-site'
 const MAX_RECENT = 10
 
 function loadSites() {
@@ -11,8 +12,13 @@ function loadSites() {
   }
 }
 
+function loadLastSite() {
+  return localStorage.getItem(LAST_SITE_KEY) ?? ''
+}
+
 export function useSites() {
   const [sites, setSites] = useState(loadSites)
+  const [lastSite, setLastSiteState] = useState(loadLastSite)
 
   const addSite = useCallback((name) => {
     const trimmed = name.trim()
@@ -30,7 +36,18 @@ export function useSites() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
       return next
     })
+    setLastSiteState((prev) => {
+      if (prev !== name) return prev
+      localStorage.removeItem(LAST_SITE_KEY)
+      return ''
+    })
   }, [])
 
-  return { sites, addSite, removeSite }
+  const selectSite = useCallback((name) => {
+    const trimmed = name.trim()
+    localStorage.setItem(LAST_SITE_KEY, trimmed)
+    setLastSiteState(trimmed)
+  }, [])
+
+  return { sites, addSite, removeSite, lastSite, selectSite }
 }

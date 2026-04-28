@@ -10,7 +10,6 @@ import { compressImage } from './utils/compress'
 import { buildFilename, buildMemoText } from './utils/filename'
 
 export default function App() {
-  const [siteName, setSiteName] = useState('')
   const [phase, setPhase] = useState('idle') // idle | preview | done
   const [capturedBlob, setCapturedBlob] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
@@ -19,7 +18,7 @@ export default function App() {
   const [uploadError, setUploadError] = useState(null)
 
   const { videoRef, ready, error: camError, startCamera, stopCamera, capture } = useCamera()
-  const { sites, addSite, removeSite } = useSites()
+  const { sites, addSite, removeSite, lastSite: siteName, selectSite: setSiteName } = useSites()
   const { uploading, upload } = useDrive()
 
   const handleCapture = useCallback(async () => {
