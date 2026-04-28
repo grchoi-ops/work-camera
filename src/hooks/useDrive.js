@@ -9,18 +9,6 @@ export function useDrive() {
   const [error, setError] = useState(null)
   const pendingRef = useRef(null)
 
-  const login = useGoogleLogin({
-    scope: 'https://www.googleapis.com/auth/drive.file',
-    onSuccess: async (res) => {
-      setToken(res.access_token)
-      if (pendingRef.current) {
-        await runUpload(res.access_token, pendingRef.current)
-        pendingRef.current = null
-      }
-    },
-    onError: (e) => setError('Google 로그인 실패: ' + (e.error_description ?? e.error)),
-  })
-
   const runUpload = useCallback(async (tok, params) => {
     setUploading(true)
     setError(null)
@@ -36,12 +24,39 @@ export function useDrive() {
     }
   }, [])
 
+  const login = useGoogleLogin({
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    onSuccess: async (res) => {
+      setToken(res.access_token)
+      if (pendingRef.current) {
+        const { params, resolve, reject } = pendingRef.current
+        pendingRef.current = null
+        try {
+          resolve(await runUpload(res.access_token, params))
+        } catch (e) {
+          reject(e)
+        }
+      }
+    },
+    onError: (e) => {
+      const msg = 'Google 로그인 실패: ' + (e.error_description ?? e.error)
+      setError(msg)
+      setUploading(false)
+      if (pendingRef.current) {
+        pendingRef.current.reject(new Error(msg))
+        pendingRef.current = null
+      }
+    },
+  })
+
   const upload = useCallback(
     async (params) => {
       if (!token) {
-        pendingRef.current = params
-        login()
-        return
+        setUploading(true)
+        return new Promise((resolve, reject) => {
+          pendingRef.current = { params, resolve, reject }
+          login()
+        })
       }
       return runUpload(token, params)
     },
