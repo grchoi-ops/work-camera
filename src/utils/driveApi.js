@@ -11,6 +11,10 @@ async function findFolder(token, name, parentId = null) {
     `${DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=files(id,name)`,
     { headers: { Authorization: `Bearer ${token}` } }
   )
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.error?.message ?? 'Drive 폴더 조회 실패')
+  }
   const data = await res.json()
   return data.files?.[0]?.id ?? null
 }
@@ -29,6 +33,10 @@ async function createFolder(token, name, parentId = null) {
     },
     body: JSON.stringify(meta),
   })
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.error?.message ?? 'Drive 폴더 생성 실패')
+  }
   const data = await res.json()
   return data.id
 }
