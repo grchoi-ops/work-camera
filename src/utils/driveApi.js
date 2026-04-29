@@ -1,3 +1,5 @@
+export class AuthError extends Error {}
+
 const DRIVE_API = 'https://www.googleapis.com/drive/v3'
 const UPLOAD_API = 'https://www.googleapis.com/upload/drive/v3'
 const ROOT_FOLDER = '업무사진'
@@ -12,6 +14,7 @@ async function findFolder(token, name, parentId = null) {
     { headers: { Authorization: `Bearer ${token}` } }
   )
   if (!res.ok) {
+    if (res.status === 401) throw new AuthError('토큰 만료')
     const err = await res.json()
     throw new Error(err.error?.message ?? 'Drive 폴더 조회 실패')
   }
@@ -34,6 +37,7 @@ async function createFolder(token, name, parentId = null) {
     body: JSON.stringify(meta),
   })
   if (!res.ok) {
+    if (res.status === 401) throw new AuthError('토큰 만료')
     const err = await res.json()
     throw new Error(err.error?.message ?? 'Drive 폴더 생성 실패')
   }
@@ -58,6 +62,7 @@ async function uploadFile(token, blob, filename, mimeType, folderId) {
     body: form,
   })
   if (!res.ok) {
+    if (res.status === 401) throw new AuthError('토큰 만료')
     const err = await res.json()
     throw new Error(err.error?.message ?? '업로드 실패')
   }
