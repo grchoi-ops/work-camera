@@ -20,7 +20,7 @@ export default function App({ onResetClientId }) {
 
   const { videoRef, ready, error: camError, startCamera, stopCamera, capture } = useCamera()
   const { sites, addSite, removeSite, lastSite: siteName, selectSite: setSiteName } = useSites()
-  const { uploading, upload } = useDrive()
+  const { token, uploading, upload, login } = useDrive()
 
   const handleCapture = useCallback(async () => {
     const blob = await capture()
@@ -73,6 +73,30 @@ export default function App({ onResetClientId }) {
     setUploadError(null)
     setPhase('idle')
   }, [previewUrl])
+
+  // 로그인 전 — 시작 화면
+  if (!token) {
+    return (
+      <div className="min-h-dvh bg-slate-900 flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md flex flex-col items-center gap-6">
+          <h1 className="text-white font-bold text-xl">업무 카메라</h1>
+          <p className="text-slate-400 text-sm text-center">Google 계정으로 로그인하면<br />Drive에 사진이 자동 저장됩니다</p>
+          <button
+            onClick={login}
+            className="w-full py-3 rounded-xl bg-blue-600 text-white font-medium active:brightness-90"
+          >
+            Google로 로그인
+          </button>
+          <button
+            onClick={onResetClientId}
+            className="text-slate-600 text-xs underline active:text-slate-400"
+          >
+            API 설정 초기화
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-dvh bg-slate-900 flex flex-col items-center">
