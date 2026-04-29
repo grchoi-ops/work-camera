@@ -1,0 +1,38 @@
+{
+  "name": "cam-organizer",
+  "version": "1.0.0",
+  "description": "업무 사진 PC 정리 앱",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"npx wait-on tcp:4877 && npx cross-env NODE_ENV=development electron .\"",
+    "build": "vite build",
+    "dist": "vite build && electron-builder",
+    "preview": "vite preview"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "electron": "^33.4.4",
+    "electron-builder": "^25.1.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^6.3.4",
+    "wait-on": "^8.0.3",
+    "cross-env": "^7.0.3"
+  },
+  "build": {
+    "appId": "com.workcam.organizer",
+    "productName": "업무사진 정리",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
