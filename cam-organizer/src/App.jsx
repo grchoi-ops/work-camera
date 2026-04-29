@@ -63,7 +63,7 @@ export default function App() {
   }, [addLog])
 
   const handleSelectLocal = useCallback(async () => {
-    const folder = await api.selectFolder(outputFolder || undefined)
+    const folder = await api.selectFolder(localFolder || undefined)
     if (!folder) return
     setLocalFolder(folder)
     const files = await api.scanFolder(folder)
@@ -73,15 +73,15 @@ export default function App() {
     setSelected(newPlan.map(() => true))
     const jpgCount = newPlan.filter((p) => /\.(jpg|jpeg)$/i.test(p.src)).length
     addLog(`스캔 완료 — 사진 ${jpgCount}개`, 'info')
-  }, [depth, abbrMap, addLog, outputFolder])
+  }, [depth, abbrMap, addLog, localFolder])
 
   const handleSelectOutput = useCallback(async () => {
-    const folder = await api.selectOutputFolder(localFolder || undefined)
+    const folder = await api.selectOutputFolder(outputFolder || undefined)
     if (!folder) return
     setOutputFolder(folder)
     api.driveSetOutputFolder?.(folder)
     addLog(`출력 폴더: ${folder}`, 'info')
-  }, [addLog, localFolder])
+  }, [addLog, outputFolder])
 
   const handleSaveAbbrMap = useCallback((newMap) => {
     localStorage.setItem(ABBR_KEY, JSON.stringify(newMap))
