@@ -9,7 +9,9 @@
     "dist": "vite build && electron-builder",
     "preview": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.2",
