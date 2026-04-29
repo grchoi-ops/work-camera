@@ -21,8 +21,8 @@ export function PreviewTable({ plan, selected, onToggle, onToggleAll, depth = 1 
             <th style={th}><input type="checkbox" checked={allSelected} onChange={onToggleAll} /></th>
             <th style={{ ...th, textAlign: 'left' }}>파일명</th>
             <th style={{ ...th, textAlign: 'left' }}>현장</th>
-            <th style={{ ...th, textAlign: 'left' }}>주차</th>
-            {depth >= 2 && <th style={{ ...th, textAlign: 'left' }}>아이템</th>}
+            {depth !== 4 && <th style={{ ...th, textAlign: 'left' }}>주차</th>}
+            {(depth >= 2 || depth === 4) && <th style={{ ...th, textAlign: 'left' }}>아이템</th>}
             {depth >= 3 && <th style={{ ...th, textAlign: 'left' }}>세부분류</th>}
             <th style={{ ...th, textAlign: 'left' }}>저장 경로</th>
           </tr>
@@ -36,8 +36,8 @@ export function PreviewTable({ plan, selected, onToggle, onToggleAll, depth = 1 
                 <td style={td}><input type="checkbox" checked={!!selected[planIdx]} onChange={() => onToggle(planIdx)} onClick={(e) => e.stopPropagation()} /></td>
                 <td style={{ ...td, color: '#e2e8f0', fontFamily: 'monospace' }}>{p.src}</td>
                 <td style={{ ...td, color: '#38bdf8' }}>{p.site}</td>
-                <td style={{ ...td, color: '#94a3b8' }}>{p.week}</td>
-                {depth >= 2 && <td style={{ ...td, color: '#a78bfa' }}>{p.item}</td>}
+                {depth !== 4 && <td style={{ ...td, color: '#94a3b8' }}>{p.week}</td>}
+                {(depth >= 2 || depth === 4) && <td style={{ ...td, color: '#a78bfa' }}>{p.item}</td>}
                 {depth >= 3 && <td style={{ ...td, color: '#fb923c' }}>{p.sub}</td>}
                 <td style={{ ...td, color: '#64748b', fontSize: 11 }}>{p.dest}</td>
               </tr>

@@ -33,18 +33,20 @@ app.whenReady().then(() => {
   setupDriveHandlers(win)
 
   // 폴더 선택 다이얼로그
-  ipcMain.handle('dialog:selectFolder', async () => {
+  ipcMain.handle('dialog:selectFolder', async (_e, defaultPath) => {
     const { canceled, filePaths } = await dialog.showOpenDialog(win, {
       properties: ['openDirectory'],
       title: '정리할 폴더 선택',
+      ...(defaultPath && { defaultPath }),
     })
     return canceled ? null : filePaths[0]
   })
 
-  ipcMain.handle('dialog:selectOutputFolder', async () => {
+  ipcMain.handle('dialog:selectOutputFolder', async (_e, defaultPath) => {
     const { canceled, filePaths } = await dialog.showOpenDialog(win, {
       properties: ['openDirectory', 'createDirectory'],
       title: '저장할 폴더 선택',
+      ...(defaultPath && { defaultPath }),
     })
     return canceled ? null : filePaths[0]
   })

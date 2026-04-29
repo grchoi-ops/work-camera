@@ -63,7 +63,7 @@ export default function App() {
   }, [addLog])
 
   const handleSelectLocal = useCallback(async () => {
-    const folder = await api.selectFolder()
+    const folder = await api.selectFolder(outputFolder || undefined)
     if (!folder) return
     setLocalFolder(folder)
     const files = await api.scanFolder(folder)
@@ -73,15 +73,15 @@ export default function App() {
     setSelected(newPlan.map(() => true))
     const jpgCount = newPlan.filter((p) => /\.(jpg|jpeg)$/i.test(p.src)).length
     addLog(`스캔 완료 — 사진 ${jpgCount}개`, 'info')
-  }, [depth, abbrMap, addLog])
+  }, [depth, abbrMap, addLog, outputFolder])
 
   const handleSelectOutput = useCallback(async () => {
-    const folder = await api.selectOutputFolder()
+    const folder = await api.selectOutputFolder(localFolder || undefined)
     if (!folder) return
     setOutputFolder(folder)
     api.driveSetOutputFolder?.(folder)
     addLog(`출력 폴더: ${folder}`, 'info')
-  }, [addLog])
+  }, [addLog, localFolder])
 
   const handleSaveAbbrMap = useCallback((newMap) => {
     localStorage.setItem(ABBR_KEY, JSON.stringify(newMap))
@@ -153,7 +153,7 @@ export default function App() {
   const jpgCount = plan.filter((p) => /\.(jpg|jpeg)$/i.test(p.src)).length
   const selectedCount = plan.filter((p, i) => /\.(jpg|jpeg)$/i.test(p.src) && selected[i]).length
 
-  const DEPTH_LABELS = ['현장/주차', '현장/주차/아이템', '현장/주차/아이템/세부분류']
+  const DEPTH_LABELS = ['현장/주차', '현장/주차/아이템', '현장/주차/아이템/세부분류', '현장/아이템/세부분류']
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -205,7 +205,7 @@ export default function App() {
             <option key={i} value={i + 1}>{label}</option>
           ))}
         </select>
-        {depth === 3 && (
+        {depth >= 3 && (
           <button onClick={() => setShowAbbrEditor(true)} style={btn('#334155')}>약어 사전</button>
         )}
       </div>

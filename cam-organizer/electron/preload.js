@@ -2,8 +2,8 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // 로컬 파일
-  selectFolder: () => ipcRenderer.invoke('dialog:selectFolder'),
-  selectOutputFolder: () => ipcRenderer.invoke('dialog:selectOutputFolder'),
+  selectFolder: (defaultPath) => ipcRenderer.invoke('dialog:selectFolder', defaultPath),
+  selectOutputFolder: (defaultPath) => ipcRenderer.invoke('dialog:selectOutputFolder', defaultPath),
   scanFolder: (folderPath) => ipcRenderer.invoke('fs:scanFolder', folderPath),
   executeOrganize: (plan, srcFolder, destFolder, mode) =>
     ipcRenderer.invoke('fs:organize', plan, srcFolder, destFolder, mode),
