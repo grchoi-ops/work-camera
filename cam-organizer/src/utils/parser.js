@@ -35,12 +35,29 @@ export function getWeekLabel(dateStr) {
   if (!dateStr) return '날짜없음'
   const d = new Date(dateStr)
   if (isNaN(d)) return '날짜없음'
-  const month = d.getMonth() + 1
-  // 월요일 기준 주차: 해당 월 1일의 요일 오프셋(월=0 ... 일=6) 반영
-  const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay()
-  const mondayOffset = firstDay === 0 ? 6 : firstDay - 1
-  const week = Math.ceil((d.getDate() + mondayOffset) / 7)
-  return `${month}월 ${week}주차`
+
+  // 이 날짜가 속한 주의 월요일 구하기
+  const dow = d.getDay() // 0=일 1=월 ... 6=토
+  const mondayOffset = dow === 0 ? 6 : dow - 1
+  const monday = new Date(d)
+  monday.setDate(d.getDate() - mondayOffset)
+
+  // 주의 소속 월은 그 주의 목요일(월요일+3)이 속한 달로 결정
+  const thursday = new Date(monday)
+  thursday.setDate(monday.getDate() + 3)
+  const month = thursday.getMonth() + 1
+  const year = thursday.getFullYear()
+
+  // 해당 월의 첫 번째 목요일 찾기
+  const firstThursday = new Date(year, thursday.getMonth(), 1)
+  while (firstThursday.getDay() !== 4) firstThursday.setDate(firstThursday.getDate() + 1)
+
+  // 1주차 시작 월요일 = 첫 번째 목요일 - 3일
+  const week1Monday = new Date(firstThursday)
+  week1Monday.setDate(firstThursday.getDate() - 3)
+
+  const weekNum = Math.round((monday - week1Monday) / (7 * 24 * 60 * 60 * 1000)) + 1
+  return `${month}월 ${weekNum}주차`
 }
 
 /**
