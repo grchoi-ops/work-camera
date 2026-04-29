@@ -1,6 +1,6 @@
 import { MemoInput } from './MemoInput'
 
-export function PreviewView({ imageUrl, memo, onMemoChange, onRetake, onUpload, uploading }) {
+export function PreviewView({ imageUrl, item, onItemChange, memo, onMemoChange, onRetake, onUpload, uploading }) {
   return (
     <div className="flex flex-col gap-3 w-full flex-1">
       {/* 미리보기 이미지 */}
@@ -8,8 +8,8 @@ export function PreviewView({ imageUrl, memo, onMemoChange, onRetake, onUpload, 
         <img src={imageUrl} alt="촬영된 사진" className="max-h-full max-w-full object-contain" />
       </div>
 
-      {/* 메모 입력 */}
-      <MemoInput value={memo} onChange={onMemoChange} />
+      {/* 아이템 + 메모 입력 */}
+      <MemoInput item={item} onItemChange={onItemChange} value={memo} onChange={onMemoChange} />
 
       {/* 버튼 행 */}
       <div className="flex gap-3">

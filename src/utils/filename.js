@@ -11,8 +11,8 @@ export function buildFilename(siteName) {
   return `${date}_${time}_${safe}`
 }
 
-export function buildMemoText(siteName, memo) {
+export function buildMemoText(siteName, item, memo) {
   const now = new Date()
   const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  return `날짜: ${dateStr}\n현장: ${siteName}\n메모: ${memo || ''}`
+  return `날짜: ${dateStr}\n현장: ${siteName}\n아이템: ${item || ''}\n메모: ${memo || ''}`
 }

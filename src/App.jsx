@@ -9,10 +9,11 @@ import { useDrive } from './hooks/useDrive'
 import { compressImage } from './utils/compress'
 import { buildFilename, buildMemoText } from './utils/filename'
 
-export default function App() {
+export default function App({ onResetClientId }) {
   const [phase, setPhase] = useState('idle') // idle | preview | done
   const [capturedBlob, setCapturedBlob] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
+  const [item, setItem] = useState('')
   const [memo, setMemo] = useState('')
   const [uploadResult, setUploadResult] = useState(null)
   const [uploadError, setUploadError] = useState(null)
@@ -28,6 +29,7 @@ export default function App() {
     const url = URL.createObjectURL(blob)
     setCapturedBlob(blob)
     setPreviewUrl(url)
+    setItem('')
     setMemo('')
     setPhase('preview')
   }, [capture, stopCamera])
@@ -42,7 +44,7 @@ export default function App() {
   const handleUpload = useCallback(() => {
     const site = siteName.trim() || '현장'
     const baseName = buildFilename(site)
-    const memoText = memo.trim() ? buildMemoText(site, memo) : null
+    const memoText = (item.trim() || memo.trim()) ? buildMemoText(site, item, memo) : null
 
     // getParams는 login() 이후 호출 — await 없이 upload()에 전달해 팝업 차단 방지
     const getParams = async () => {
@@ -54,6 +56,7 @@ export default function App() {
       .then((result) => {
         if (siteName.trim()) addSite(siteName.trim())
         setUploadResult(result ?? { name: baseName + '.jpg' })
+        setItem('')
         setPhase('done')
       })
       .catch((e) => {
@@ -78,6 +81,12 @@ export default function App() {
         <header className="flex items-center justify-between py-1">
           <h1 className="text-white font-bold text-lg">업무 카메라</h1>
           <span className="text-slate-500 text-xs">개인사진 미저장</span>
+          <button
+            onClick={onResetClientId}
+            className="ml-auto text-slate-600 text-xs underline active:text-slate-400"
+          >
+            API 설정 초기화
+          </button>
         </header>
 
         {/* 현장명 선택 */}
@@ -104,6 +113,8 @@ export default function App() {
         {(phase === 'preview' || phase === 'done') && previewUrl && (
           <PreviewView
             imageUrl={previewUrl}
+            item={item}
+            onItemChange={setItem}
             memo={memo}
             onMemoChange={setMemo}
             onRetake={handleRetake}
