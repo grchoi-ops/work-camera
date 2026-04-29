@@ -1,4 +1,4 @@
-export function PreviewTable({ plan, selected, onToggle, onToggleAll }) {
+export function PreviewTable({ plan, selected, onToggle, onToggleAll, depth = 1 }) {
   if (!plan.length) {
     return (
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: 14 }}>
@@ -7,7 +7,11 @@ export function PreviewTable({ plan, selected, onToggle, onToggleAll }) {
     )
   }
 
-  const allSelected = plan.every((_, i) => selected[i])
+  const jpgRows = plan.filter((p) => p.src.match(/\.(jpg|jpeg)$/i))
+  const allSelected = jpgRows.every((_, i) => {
+    const planIdx = plan.indexOf(jpgRows[i])
+    return selected[planIdx]
+  })
 
   return (
     <div style={{ flex: 1, overflow: 'auto' }}>
@@ -17,25 +21,28 @@ export function PreviewTable({ plan, selected, onToggle, onToggleAll }) {
             <th style={th}><input type="checkbox" checked={allSelected} onChange={onToggleAll} /></th>
             <th style={{ ...th, textAlign: 'left' }}>파일명</th>
             <th style={{ ...th, textAlign: 'left' }}>현장</th>
-            <th style={{ ...th, textAlign: 'left' }}>아이템</th>
-            <th style={{ ...th, textAlign: 'left' }}>날짜</th>
+            <th style={{ ...th, textAlign: 'left' }}>주차</th>
+            {depth >= 2 && <th style={{ ...th, textAlign: 'left' }}>아이템</th>}
+            {depth >= 3 && <th style={{ ...th, textAlign: 'left' }}>세부분류</th>}
             <th style={{ ...th, textAlign: 'left' }}>저장 경로</th>
           </tr>
         </thead>
         <tbody>
-          {plan
-            .filter((p) => p.src.match(/\.(jpg|jpeg)$/i))
-            .map((p, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #1e293b', background: selected[i] ? '#1e293b55' : 'transparent' }}
-                onClick={() => onToggle(i)}>
-                <td style={td}><input type="checkbox" checked={!!selected[i]} onChange={() => onToggle(i)} onClick={(e) => e.stopPropagation()} /></td>
+          {jpgRows.map((p, i) => {
+            const planIdx = plan.indexOf(p)
+            return (
+              <tr key={i} style={{ borderBottom: '1px solid #1e293b', background: selected[planIdx] ? '#1e293b55' : 'transparent', cursor: 'pointer' }}
+                onClick={() => onToggle(planIdx)}>
+                <td style={td}><input type="checkbox" checked={!!selected[planIdx]} onChange={() => onToggle(planIdx)} onClick={(e) => e.stopPropagation()} /></td>
                 <td style={{ ...td, color: '#e2e8f0', fontFamily: 'monospace' }}>{p.src}</td>
                 <td style={{ ...td, color: '#38bdf8' }}>{p.site}</td>
-                <td style={{ ...td, color: '#a78bfa' }}>{p.item}</td>
-                <td style={{ ...td, color: '#94a3b8' }}>{p.date}</td>
+                <td style={{ ...td, color: '#94a3b8' }}>{p.week}</td>
+                {depth >= 2 && <td style={{ ...td, color: '#a78bfa' }}>{p.item}</td>}
+                {depth >= 3 && <td style={{ ...td, color: '#fb923c' }}>{p.sub}</td>}
                 <td style={{ ...td, color: '#64748b', fontSize: 11 }}>{p.dest}</td>
               </tr>
-            ))}
+            )
+          })}
         </tbody>
       </table>
     </div>

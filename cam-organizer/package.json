@@ -4,7 +4,7 @@
   "description": "업무 사진 PC 정리 앱",
   "main": "electron/main.js",
   "scripts": {
-    "dev": "concurrently -k \"vite\" \"npx wait-on tcp:4877 && npx cross-env NODE_ENV=development electron .\"",
+    "dev": "node scripts/start-dev.js",
     "build": "vite build",
     "dist": "vite build && electron-builder",
     "preview": "vite preview"
