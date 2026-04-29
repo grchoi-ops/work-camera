@@ -36,7 +36,10 @@ export function getWeekLabel(dateStr) {
   const d = new Date(dateStr)
   if (isNaN(d)) return '날짜없음'
   const month = d.getMonth() + 1
-  const week = Math.ceil(d.getDate() / 7)
+  // 월요일 기준 주차: 해당 월 1일의 요일 오프셋(월=0 ... 일=6) 반영
+  const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay()
+  const mondayOffset = firstDay === 0 ? 6 : firstDay - 1
+  const week = Math.ceil((d.getDate() + mondayOffset) / 7)
   return `${month}월 ${week}주차`
 }
 
