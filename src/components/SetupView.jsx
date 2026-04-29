@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-export function SetupView({ onSave }) {
-  const [clientId, setClientId] = useState('')
+export function SetupView({ defaultClientId = '', onSave }) {
+  const [clientId, setClientId] = useState(defaultClientId)
   const [error, setError] = useState('')
 
   function handleSave() {
