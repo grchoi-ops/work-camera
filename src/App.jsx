@@ -9,7 +9,7 @@ import { useDrive } from './hooks/useDrive'
 import { compressImage } from './utils/compress'
 import { buildFilename, buildMemoText } from './utils/filename'
 
-export default function App({ onResetClientId }) {
+export default function App() {
   const [phase, setPhase] = useState('idle') // idle | preview | done
   const [capturedBlob, setCapturedBlob] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
@@ -87,12 +87,6 @@ export default function App({ onResetClientId }) {
           >
             Google로 로그인
           </button>
-          <button
-            onClick={onResetClientId}
-            className="text-slate-600 text-xs underline active:text-slate-400"
-          >
-            API 설정 초기화
-          </button>
         </div>
       </div>
     )
@@ -105,12 +99,6 @@ export default function App({ onResetClientId }) {
         <header className="flex items-center justify-between py-1">
           <h1 className="text-white font-bold text-lg">업무 카메라</h1>
           <span className="text-slate-500 text-xs">개인사진 미저장</span>
-          <button
-            onClick={onResetClientId}
-            className="ml-auto text-slate-600 text-xs underline active:text-slate-400"
-          >
-            API 설정 초기화
-          </button>
         </header>
 
         {/* 현장명 선택 */}
