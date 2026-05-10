@@ -4,6 +4,7 @@ const http = require('http')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
+require('dotenv').config({ path: path.join(__dirname, '../.env') })
 
 // --- 간단한 JSON 영속 저장소 ---
 const storePath = path.join(app.getPath('userData'), 'cam-organizer-store.json')
@@ -26,8 +27,8 @@ const store = {
 }
 
 // --- OAuth 설정 ---
-const CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID || ''
-const CLIENT_SECRET = process.env.VITE_GOOGLE_CLIENT_SECRET || ''
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || ''
 const REDIRECT_URI = 'http://localhost:42813/oauth2callback'
 const SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 const ROOT_FOLDER = '업무사진'
