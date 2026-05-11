@@ -4,7 +4,10 @@ const http = require('http')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
-require('dotenv').config({ path: path.join(__dirname, '../.env') })
+const envPath = app.isPackaged
+  ? path.join(process.resourcesPath, '.env')
+  : path.join(__dirname, '../.env')
+require('dotenv').config({ path: envPath })
 
 // --- 간단한 JSON 영속 저장소 ---
 const storePath = path.join(app.getPath('userData'), 'cam-organizer-store.json')
